@@ -1,0 +1,41 @@
+{
+  "project": {
+    "name": "Cursor-mini",
+    "description": "文章修正アプリ - ユーザーがテキストを入力し、AIに指示を与えることで文章を修正できるアプリケーション",
+    "version": "1.0.0"
+  },
+  "claude": {
+    "model": "claude-3-5-sonnet-20241022",
+    "temperature": 0.1,
+    "max_tokens": 4000,
+    "system_prompt": "あなたは「Cursor mini」という文章修正アプリの開発を支援するAIアシスタントです。ユーザーがテキストを入力し、指示を与えることで文章を修正できるアプリケーションの開発を行います。常に技術的でない人にも分かりやすい説明を含め、日本語でのコミュニケーションを心がけてください。"
+  },
+  "development": {
+    "language": "typescript",
+    "framework": "react",
+    "package_manager": "npm",
+    "linting": "eslint",
+    "formatting": "prettier",
+    "testing": "jest"
+  },
+  "features": {
+    "text_input": "テキスト入力機能",
+    "text_output": "テキスト出力機能",
+    "chat_interface": "チャットインターフェース",
+    "shortcut_keys": "ショートカットキー機能",
+    "copy_function": "コピー機能",
+    "ai_integration": "Claude API連携"
+  },
+  "ui": {
+    "design_system": "モダンでミニマル",
+    "responsive": true,
+    "accessibility": true,
+    "dark_mode": false
+  },
+  "api": {
+    "claude": {
+      "endpoint": "https://api.anthropic.com/v1/messages",
+      "required_headers": ["x-api-key", "anthropic-version", "content-type"]
+    }
+  }
+} 
