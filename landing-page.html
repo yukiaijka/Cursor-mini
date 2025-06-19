@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cursor mini - AIを活用した文章修正アプリ</title>
+    <meta name="description" content="Cursor miniは、AIを活用して文章を簡単に修正できるアプリです。テキストを入力し、指示を書くだけで、AIが文章を修正してくれます。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 120px 0 80px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-bottom: 80px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: #fff;
+            color: #667eea;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background: white;
+            margin-bottom: 80px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            color: #333;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: #f8fafc;
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* How it works */
+        .how-it-works {
+            padding: 80px 0;
+            background: #f8fafc;
+            margin-bottom: 80px;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .step {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-weight: 600;
+        }
+
+        .step h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .step p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Use Cases */
+        .use-cases {
+            padding: 80px 0;
+            background: white;
+            margin-bottom: 80px;
+        }
+
+        .use-case {
+            background: #f8fafc;
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            border-left: 4px solid #667eea;
+        }
+
+        .use-case h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .use-case-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .use-case-text {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .use-case-example {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Installation */
+        .installation {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-bottom: 80px;
+        }
+
+        .installation .section-title {
+            color: white;
+        }
+
+        .install-steps {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 16px;
+            margin-top: 2rem;
+        }
+
+        .install-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .install-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .install-step-number {
+            width: 30px;
+            height: 30px;
+            background: white;
+            color: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        .install-step-text {
+            flex: 1;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin-top: 0.5rem;
+            overflow-x: auto;
+        }
+
+        /* Footer */
+        .footer {
+            background: #333;
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section p, .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            line-height: 1.6;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #555;
+            padding-top: 2rem;
+            color: #ccc;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .use-case-content {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 0 15px;
+            }
+
+            .feature-card, .step, .use-case {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav container">
+            <a href="#" class="logo">Cursor mini</a>
+            <ul class="nav-links">
+                <li><a href="#features">機能</a></li>
+                <li><a href="#how-it-works">使い方</a></li>
+                <li><a href="#use-cases">ユースケース</a></li>
+                <li><a href="#installation">インストール</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>AIを活用した文章修正アプリ</h1>
+            <p>テキストを入力し、指示を書くだけで、AIが文章を修正してくれます。文字の置き換え、削除、追加など、様々な修正に対応。</p>
+            <a href="#installation" class="cta-button">今すぐインストール</a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">主な機能</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI駆動の文章修正</h3>
+                    <p>Claude AIを活用して、自然で正確な文章修正を実現します。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>簡単操作</h3>
+                    <p>テキストを入力し、指示を書くだけのシンプルな操作で文章を修正できます。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📋</div>
+                    <h3>ワンクリックコピー</h3>
+                    <p>修正された文章をワンクリックでクリップボードにコピーできます。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>多様な修正対応</h3>
+                    <p>文字の置き換え、削除、追加など、様々な修正ニーズに対応します。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💻</div>
+                    <h3>モダンなUI</h3>
+                    <p>React + TypeScriptで構築された、美しく使いやすいインターフェース。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>セキュア</h3>
+                    <p>Claude APIを使用した安全で信頼性の高い文章修正サービス。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">使い方</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>アプリを起動</h3>
+                    <p>ショートカットキーでCursor miniを呼び出します</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>テキストを入力</h3>
+                    <p>修正したい文章をテキスト挿入欄に入力します</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>指示を書く</h3>
+                    <p>チャット欄に修正の指示を入力します</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>AIが修正</h3>
+                    <p>AIが指示通りに文章を修正します</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <h3>結果をコピー</h3>
+                    <p>修正された文章をコピーボタンでクリップボードにコピーします</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases -->
+    <section id="use-cases" class="use-cases">
+        <div class="container">
+            <h2 class="section-title">ユースケース</h2>
+            
+            <div class="use-case">
+                <h3>❶ 文字の置き換え</h3>
+                <div class="use-case-content">
+                    <div class="use-case-text">
+                        <p><strong>入力テキスト:</strong> 「デュオリンゴのスマート解説紹介パートの部分共有になります。デュオリンゴのリリー通話パートの部分共有になります。」</p>
+                        <p><strong>指示:</strong> 「デュオリンゴをDuolingoに変更」</p>
+                        <p><strong>結果:</strong> 「Duolingoのスマート解説紹介パートの部分共有になります。Duolingoのリリー通話パートの部分共有になります。」</p>
+                    </div>
+                    <div class="use-case-example">
+                        修正したいテキスト:
+                        "デュオリンゴのスマート解説..."
+                        
+                        修正の指示:
+                        "デュオリンゴをDuolingoに変更"
+                        
+                        ↓
+                        
+                        修正結果:
+                        "Duolingoのスマート解説..."
+                    </div>
+                </div>
+            </div>
+
+            <div class="use-case">
+                <h3>❷ 文字の削除</h3>
+                <div class="use-case-content">
+                    <div class="use-case-text">
+                        <p><strong>入力テキスト:</strong> 全角スペースが含まれたリスト</p>
+                        <p><strong>指示:</strong> 「全角スペースをなくして」</p>
+                        <p><strong>結果:</strong> 全角スペースが削除されたクリーンなリスト</p>
+                    </div>
+                    <div class="use-case-example">
+                        修正したいテキスト:
+                        "　　・Instagram広告..."
+                        
+                        修正の指示:
+                        "全角スペースをなくして"
+                        
+                        ↓
+                        
+                        修正結果:
+                        "・Instagram広告..."
+                    </div>
+                </div>
+            </div>
+
+            <div class="use-case">
+                <h3>❸ 文字の追加</h3>
+                <div class="use-case-content">
+                    <div class="use-case-text">
+                        <p><strong>入力テキスト:</strong> プレーンテキストのリスト</p>
+                        <p><strong>指示:</strong> 「文頭に・を追加して」</p>
+                        <p><strong>結果:</strong> 各項目に・が追加されたリスト</p>
+                    </div>
+                    <div class="use-case-example">
+                        修正したいテキスト:
+                        "Instagram広告キャンペーン..."
+                        
+                        修正の指示:
+                        "文頭に・を追加して"
+                        
+                        ↓
+                        
+                        修正結果:
+                        "・Instagram広告キャンペーン..."
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Installation -->
+    <section id="installation" class="installation">
+        <div class="container">
+            <h2 class="section-title">インストール方法</h2>
+            <div class="install-steps">
+                <div class="install-step">
+                    <div class="install-step-number">1</div>
+                    <div class="install-step-text">
+                        <strong>リポジトリをクローン</strong>
+                        <div class="code-block">git clone https://github.com/your-username/cursor-mini.git
+cd cursor-mini</div>
+                    </div>
+                </div>
+                <div class="install-step">
+                    <div class="install-step-number">2</div>
+                    <div class="install-step-text">
+                        <strong>依存関係をインストール</strong>
+                        <div class="code-block">npm install</div>
+                    </div>
+                </div>
+                <div class="install-step">
+                    <div class="install-step-number">3</div>
+                    <div class="install-step-text">
+                        <strong>環境変数を設定</strong>
+                        <div class="code-block">cp env.example .env</div>
+                        <p style="margin-top: 0.5rem; font-size: 0.9rem;">.envファイルを編集して、Claude APIキーを設定してください</p>
+                    </div>
+                </div>
+                <div class="install-step">
+                    <div class="install-step-number">4</div>
+                    <div class="install-step-text">
+                        <strong>開発サーバーを起動</strong>
+                        <div class="code-block">npm run dev</div>
+                        <p style="margin-top: 0.5rem; font-size: 0.9rem;">ブラウザで http://localhost:3000 にアクセスしてください</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Cursor mini</h3>
+                    <p>AIを活用した文章修正アプリ。テキストを入力し、指示を書くだけで、AIが文章を修正してくれます。</p>
+                </div>
+                <div class="footer-section">
+                    <h3>技術スタック</h3>
+                    <p>React 18 + TypeScript<br>
+                    Vite<br>
+                    Claude API<br>
+                    CSS Modules</p>
+                </div>
+                <div class="footer-section">
+                    <h3>リンク</h3>
+                    <p><a href="https://github.com/your-username/cursor-mini">GitHub</a><br>
+                    <a href="#installation">インストール</a><br>
+                    <a href="#features">機能</a></p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Cursor mini Team. MIT License.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Header background on scroll
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(255, 255, 255, 0.98)';
+            } else {
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+            }
+        });
+    </script>
+</body>
+</html> 
