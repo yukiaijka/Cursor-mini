@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import TextInput from '@/components/TextInput';
-import ChatInput from '@/components/ChatInput';
-import TextOutput from '@/components/TextOutput';
+import { useState } from 'react';
+import TextInput from './components/TextInput';
+import ChatInput from './components/ChatInput';
+import TextOutput from './components/TextOutput';
+import { correctText } from './api/claude';
 import './App.css';
 
 function App() {
@@ -9,22 +10,34 @@ function App() {
   const [chatMessage, setChatMessage] = useState('');
   const [outputText, setOutputText] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState('');
 
   // テキスト修正処理
   const handleTextCorrection = async () => {
     if (!inputText.trim() || !chatMessage.trim()) {
-      alert('テキストと指示を入力してください');
+      setError('テキストと指示を入力してください');
       return;
     }
 
     setIsProcessing(true);
+    setError('');
+    
     try {
-      // TODO: Claude APIとの連携を実装
-      // 仮の処理として、入力テキストをそのまま出力
-      setOutputText(inputText);
+      const response = await correctText({
+        inputText: inputText.trim(),
+        instruction: chatMessage.trim(),
+      });
+
+      if (response.error) {
+        setError(response.error);
+        setOutputText('');
+      } else {
+        setOutputText(response.correctedText);
+      }
     } catch (error) {
       console.error('テキスト修正エラー:', error);
-      alert('テキストの修正中にエラーが発生しました');
+      setError('テキストの修正中にエラーが発生しました');
+      setOutputText('');
     } finally {
       setIsProcessing(false);
     }
@@ -38,6 +51,12 @@ function App() {
       </header>
       
       <main className="app-main">
+        {error && (
+          <div className="error-message">
+            {error}
+          </div>
+        )}
+        
         <div className="input-section">
           <TextInput 
             value={inputText}

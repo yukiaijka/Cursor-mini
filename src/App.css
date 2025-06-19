@@ -35,6 +35,16 @@
   gap: 2rem;
 }
 
+.error-message {
+  background-color: #fee;
+  color: #c53030;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #feb2b2;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
 .input-section {
   display: flex;
   flex-direction: column;
